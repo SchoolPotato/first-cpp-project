@@ -33,15 +33,30 @@ void init() {
 	skySprite.setTexture(skyTexture);
 
 	// Load Ninja
-	player.init("art/ninja.png", sf::Glsl::Vec2(viewSize.x * 0.25f, viewSize.y * 0.0f), 100);
+	player.init("art/ninjaSheet.png", sf::Glsl::Vec2(viewSize.x * 0.25f, viewSize.y * 0.0f), 100);
 }
-void updateInput() {
+void updateInput(float dt) {
 	sf::Event event;
 
 	while (window.pollEvent(event)) {
 		if (event.type == sf::Event::KeyPressed) {
-			if (event.key.code == sf::Keyboard::Up) {
-				player.jump(750.0f);
+			if (event.key.code == sf::Keyboard::Z) {
+				player.jump(375.0f);
+			}
+			if (event.key.code == sf::Keyboard::Right) {
+				player.movement(true, true);
+			}
+			if (event.key.code == sf::Keyboard::Left) {
+				player.movement(true, false);
+			}
+		}
+
+		if (event.type == sf::Event::KeyReleased) {
+			if (event.key.code == sf::Keyboard::Right) {
+				player.movement(false, true);
+			}
+			if (event.key.code == sf::Keyboard::Left) {
+				player.movement(false, false);
 			}
 		}
 
@@ -52,7 +67,7 @@ void updateInput() {
 	}
 }
 void update(float dt) {
-	player.update(dt);
+	player.update(dt, 27u);
 }
 
 int main() {
@@ -62,8 +77,8 @@ int main() {
 
 	while (window.isOpen()) {
 		// Handle Keyboard Events
-		updateInput();
 		sf::Time dt = clock.restart();
+		updateInput(dt.asSeconds());
 		update(dt.asSeconds());
 		// Update Game Objects in the scene
 		window.clear(color);
