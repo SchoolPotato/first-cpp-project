@@ -9,11 +9,12 @@ public:
 	// ~Player();
 
 	void init(std::string textureName, sf::Glsl::Vec2, float mass);
-	void update(float dt, unsigned int frameCount);
+	void update(sf::Time dt, unsigned int frameCount);
 	void jump(float velocity);
-	void animation(sf::Time dtframe, unsigned int frameCount);
+	void animation(sf::Time dtFrame, unsigned int frameCount);
 	void walk(float velocity, float dt);
 	void movement(bool walking, bool right);
+	void sprinting(bool sprinting);
 	sf::Sprite getSprite();
 
 private:
@@ -31,5 +32,6 @@ private:
 			bool m_grounded = true;
 			bool m_moveRight = false;
 			bool m_moveLeft = false;
+			bool m_sprinting = false;
 };
 

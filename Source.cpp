@@ -33,7 +33,7 @@ void init() {
 	skySprite.setTexture(skyTexture);
 
 	// Load Ninja
-	player.init("art/ninjaSheet.png", sf::Glsl::Vec2(viewSize.x * 0.25f, viewSize.y * 0.0f), 100);
+	player.init("art/ninjaSheet.png", sf::Glsl::Vec2(viewSize.x * 0.25f, viewSize.y * 0.0f), 50);
 }
 void updateInput(float dt) {
 	sf::Event event;
@@ -41,13 +41,16 @@ void updateInput(float dt) {
 	while (window.pollEvent(event)) {
 		if (event.type == sf::Event::KeyPressed) {
 			if (event.key.code == sf::Keyboard::Z) {
-				player.jump(375.0f);
+				player.jump(325.0f);
 			}
 			if (event.key.code == sf::Keyboard::Right) {
 				player.movement(true, true);
 			}
 			if (event.key.code == sf::Keyboard::Left) {
 				player.movement(true, false);
+			}
+			if (event.key.code == sf::Keyboard::X) {
+				player.sprinting(true);
 			}
 		}
 
@@ -58,6 +61,9 @@ void updateInput(float dt) {
 			if (event.key.code == sf::Keyboard::Left) {
 				player.movement(false, false);
 			}
+			if (event.key.code == sf::Keyboard::X) {
+				player.sprinting(false);
+			}
 		}
 
 		// Detect ESC key to close the game
@@ -66,7 +72,7 @@ void updateInput(float dt) {
 		}
 	}
 }
-void update(float dt) {
+void update(sf::Time dt) {
 	player.update(dt, 27u);
 }
 
@@ -79,7 +85,7 @@ int main() {
 		// Handle Keyboard Events
 		sf::Time dt = clock.restart();
 		updateInput(dt.asSeconds());
-		update(dt.asSeconds());
+		update(dt);
 		// Update Game Objects in the scene
 		window.clear(color);
 		draw();

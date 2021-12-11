@@ -43,29 +43,45 @@ void Player::animation(sf::Time dtFrame, unsigned int frameCount) {
 		// https://en.sfml-dev.org/forums/index.php?topic=27324.0 Use This As Reference
 	}
 	unsigned int frame{ currentAnimationFrame };
+	if (currentAnimationFrame >= frameCount) {
+		currentAnimationFrame = 0;
+	}
+
+	currentAnimationFrame = currentAnimationFrame % numberOfAnimationFrames;
+
 	m_textureRect.left = m_textureRect.left + (currentAnimationFrame * 16u);
 }
 
-void Player::update(float dt, unsigned int frameCount) {
-	m_force -= m_mass * m_gravity * dt;
-	m_position.y -= m_force * dt;
-	m_position.y -= m_velocity * dt;
+void Player::update(sf::Time dt, unsigned int frameCount) {
+	m_force -= m_mass * m_gravity * dt.asSeconds();
+	m_position.y -= m_force * dt.asSeconds();
+	m_position.y -= m_velocity * dt.asSeconds();
 	m_sprite.setPosition(m_position);
 
-	animation(sf::Time(), frameCount);
+	animation(dt, frameCount);
 
 	m_sprite.setTextureRect(m_textureRect);
 
 	if (m_velocity > 0) {
-		m_velocity--;
+		m_velocity = m_velocity - 0.2;
 	}
 
-	if (m_moveRight == true) {
-		walk(75.0f, dt);
+	if (m_moveRight) {
+		if (m_sprinting) {
+			walk(125.0f, dt.asSeconds());
+		}
+		else {
+			walk(75.0f, dt.asSeconds());
+		}
 	}
 
-	if (m_moveLeft == true) {
-		walk(-75.0f, dt);
+	if (m_moveLeft) {
+		if (m_sprinting) {
+			walk(-125.0f, dt.asSeconds());
+		}
+		else {
+			walk(-75.0f, dt.asSeconds());
+		}
 	}
 
 	if (m_position.y >= 180 * 0.75f) {
@@ -78,12 +94,15 @@ void Player::update(float dt, unsigned int frameCount) {
 
 void Player::jump(float velocity) {
 	if (jumpCount < 1) {
-		//if (jumpCount == 1) {
-		//	m_force = 0;
-		//}
+		if (jumpCount == 1) {
+			m_force = 0;
+		}
 		jumpCount++;
 
 		m_velocity = velocity;
+		if (m_sprinting) {
+			m_velocity += 25.0f;
+		}
 		m_grounded = false;
 	}
 }
@@ -105,6 +124,15 @@ void Player::movement(bool walking, bool right) {
 		if (!right) {
 			m_moveLeft = false;
 		}
+	}
+}
+
+void Player::sprinting(bool sprinting) {
+	if (sprinting) {
+		m_sprinting = true;
+	}
+	if (!sprinting) {
+		m_sprinting = false;
 	}
 }
 
